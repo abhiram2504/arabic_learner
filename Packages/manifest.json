@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.unity.feature.characters-animation": "1.0.0",
     "com.unity.multiplayer.center": "1.0.0",
     "com.unity.xr.management": "4.5.3",
     "com.unity.xr.openxr": "1.16.0",
