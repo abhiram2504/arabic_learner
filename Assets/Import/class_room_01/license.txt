@@ -1,0 +1,8 @@
+Model Information:
+* title:	class room 01
+* source:	https://sketchfab.com/3d-models/class-room-01-82758fa4a5864744833e01c723a1cf4e
+* author:	Digital screen official (https://sketchfab.com/ck212575)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works
