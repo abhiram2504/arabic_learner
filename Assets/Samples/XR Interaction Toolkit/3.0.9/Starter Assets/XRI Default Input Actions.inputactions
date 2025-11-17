@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "XRI Default Input Actions",
     "maps": [
         {
@@ -513,7 +514,7 @@
                 {
                     "name": "first",
                     "id": "abf752ec-feee-4d51-b530-f0870f48acc9",
-                    "path": "<XRController>{LeftHand}/pointerPosition",
+                    "path": "<XRController>{LeftHand}/{PointerPosition}",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
