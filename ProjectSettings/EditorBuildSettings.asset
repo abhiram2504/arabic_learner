@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Samples/XR Interaction Toolkit/3.0.9/Hands Interaction Demo/HandsDemoScene.unity
-    guid: 3ff35cecbcc52cc42945cf531638a60a
+    path: Assets/Kitchen_scene.unity
+    guid: fa0804543dceb46e88fd5c44ccd4e173
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 361807e97ab4b2d4c85e5021a7d5d84d, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 6a4a8daa4ad93403ab3fcfae30a0a63b, type: 2}
