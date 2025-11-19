@@ -1,0 +1,11 @@
+Model Information:
+* title:	BLENDER / MIXER
+* source:	https://sketchfab.com/3d-models/blender-mixer-1cd762fba661454ca48097d217c89f8a
+* author:	Nordic_Face (https://sketchfab.com/Nordic_Face)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "BLENDER / MIXER" (https://sketchfab.com/3d-models/blender-mixer-1cd762fba661454ca48097d217c89f8a) by Nordic_Face (https://sketchfab.com/Nordic_Face) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
