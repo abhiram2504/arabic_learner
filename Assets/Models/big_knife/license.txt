@@ -1,0 +1,11 @@
+Model Information:
+* title:	Big Knife
+* source:	https://sketchfab.com/3d-models/big-knife-46b2c1d289f448be8d5562b10ad7f55c
+* author:	Nathalie Michel (https://sketchfab.com/nathalie.michel)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Big Knife" (https://sketchfab.com/3d-models/big-knife-46b2c1d289f448be8d5562b10ad7f55c) by Nathalie Michel (https://sketchfab.com/nathalie.michel) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

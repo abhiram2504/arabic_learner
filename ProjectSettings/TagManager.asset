@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - VocabObj
+  - knife
   layers:
   - Default
   - TransparentFX
