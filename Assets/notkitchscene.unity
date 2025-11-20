@@ -2889,6 +2889,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4178042723572619382, guid: 4b9dbacc12274da4a95d6022959279fb, type: 3}
+      propertyPath: m_Colliders.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4178042723572619382, guid: 4b9dbacc12274da4a95d6022959279fb, type: 3}
+      propertyPath: 'm_Colliders.Array.data[0]'
+      value: 
+      objectReference: {fileID: 921773179}
+    - target: {fileID: 4178042723572619382, guid: 4b9dbacc12274da4a95d6022959279fb, type: 3}
+      propertyPath: 'm_Colliders.Array.data[1]'
+      value: 
+      objectReference: {fileID: 921773178}
     - target: {fileID: 6866503823848065064, guid: 4b9dbacc12274da4a95d6022959279fb, type: 3}
       propertyPath: m_Name
       value: FINALGARLIC
@@ -3025,6 +3037,16 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!135 &921773178 stripped
+SphereCollider:
+  m_CorrespondingSourceObject: {fileID: 4490117865675861401, guid: 4b9dbacc12274da4a95d6022959279fb, type: 3}
+  m_PrefabInstance: {fileID: 921773173}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &921773179 stripped
+BoxCollider:
+  m_CorrespondingSourceObject: {fileID: 3480591228027392677, guid: 4b9dbacc12274da4a95d6022959279fb, type: 3}
+  m_PrefabInstance: {fileID: 921773173}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1103196837
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4564,7 +4586,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_InteractionManager: {fileID: 0}
-  m_Colliders: []
+  m_Colliders:
+  - {fileID: 2774220344617628948}
   m_InteractionLayers:
     m_Bits: 1
   m_DistanceCalculationMode: 1
