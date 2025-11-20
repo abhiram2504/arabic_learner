@@ -164,12 +164,13 @@ public class HummusBowlChecker : MonoBehaviour
 
     /// <summary>
     /// Check if FoodItems is complete and show result
+    /// If ingredients are not all added, shows fail screen and reloads scene
     /// </summary>
     public void CheckConditions()
     {
         if (showDebugMessages)
         {
-            Debug.Log("HummusBowlChecker: Button pressed - Checking conditions...");
+            Debug.Log("HummusBowlChecker: Button pressed - Checking if all ingredients are added...");
         }
 
         // Stop timer
@@ -177,26 +178,37 @@ public class HummusBowlChecker : MonoBehaviour
 
         // Check if FoodItems is complete
         bool success = false;
-        if (foodItemsScript != null)
+        string failureReason = "";
+
+        if (foodItemsScript == null)
         {
-            success = foodItemsScript.IsComplete();
-        }
-        else
-        {
+            failureReason = "FoodItems script not found!";
             if (showDebugMessages)
             {
                 Debug.LogWarning("HummusBowlChecker: FoodItems script is null! Cannot check conditions.");
             }
         }
+        else
+        {
+            success = foodItemsScript.IsComplete();
+            if (!success)
+            {
+                failureReason = "Not all ingredients have been added to the blender!";
+                if (showDebugMessages)
+                {
+                    Debug.LogWarning("HummusBowlChecker: Ingredients not complete - some ingredients are missing!");
+                }
+            }
+        }
 
-        // Show result
+        // Show result - ALWAYS show either success or failure
         if (success)
         {
             ShowSuccess();
         }
         else
         {
-            ShowFailure();
+            ShowFailure(failureReason);
         }
     }
 
@@ -220,11 +232,11 @@ public class HummusBowlChecker : MonoBehaviour
         }
     }
 
-    void ShowFailure()
+    void ShowFailure(string reason = "")
     {
         if (showDebugMessages)
         {
-            Debug.Log("HummusBowlChecker: FAILURE! Showing fail canvas.");
+            Debug.Log($"HummusBowlChecker: FAILURE! Reason: {reason}");
         }
 
         // Hide hummus bowl
@@ -237,13 +249,21 @@ public class HummusBowlChecker : MonoBehaviour
         if (failCanvas != null)
         {
             failCanvas.gameObject.SetActive(true);
+
+            // Update fail text with reason if provided
+            if (failText != null)
+            {
+                string message = failMessage;
+                if (!string.IsNullOrEmpty(reason))
+                {
+                    message += $"\n\n{reason}";
+                }
+                failText.text = message;
+            }
         }
 
-        // Reload scene if enabled
-        if (reloadSceneOnFailure)
-        {
-            StartCoroutine(ReloadSceneAfterDelay());
-        }
+        // ALWAYS reload scene on failure (restart from beginning)
+        StartCoroutine(ReloadSceneAfterDelay());
     }
 
     IEnumerator ReloadSceneAfterDelay()
@@ -414,7 +434,7 @@ public class HummusBowlChecker : MonoBehaviour
         }
 
         StopTimer();
-        ShowFailure();
+        ShowFailure("Time limit exceeded!");
     }
 
     void UpdateTimerDisplay()

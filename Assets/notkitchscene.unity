@@ -1206,6 +1206,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   solidIngredients:
   - {fileID: 888025931}
+  - {fileID: 453902624}
   pourIngredients: []
   pourZone: {fileID: 0}
   rotationThreshold: 90
