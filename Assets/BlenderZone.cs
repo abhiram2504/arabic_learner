@@ -22,3 +22,4 @@ public class BlenderZone : MonoBehaviour
             Destroy(other.gameObject);
         }
     }
+}
