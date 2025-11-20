@@ -375,6 +375,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: olive_oil
       objectReference: {fileID: 0}
+    - target: {fileID: -6366768376665628306, guid: a0a8bbd9e768244bfa34c8278efe5a0b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -6366768376665628306, guid: a0a8bbd9e768244bfa34c8278efe5a0b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -6366768376665628306, guid: a0a8bbd9e768244bfa34c8278efe5a0b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
     - target: {fileID: 2774220344278030320, guid: a0a8bbd9e768244bfa34c8278efe5a0b, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.005
@@ -401,19 +413,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2774220344278030320, guid: a0a8bbd9e768244bfa34c8278efe5a0b, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.6880168
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2774220344278030320, guid: a0a8bbd9e768244bfa34c8278efe5a0b, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.6880168
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2774220344278030320, guid: a0a8bbd9e768244bfa34c8278efe5a0b, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.163196
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2774220344278030320, guid: a0a8bbd9e768244bfa34c8278efe5a0b, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.163196
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2774220344278030320, guid: a0a8bbd9e768244bfa34c8278efe5a0b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1266,8 +1278,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4.387951, y: 5.2680016, z: 9.979992}
-  m_Center: {x: -0.11205673, y: -0.38952827, z: 4.4899964}
+  m_Size: {x: 4.3256035, y: 9.66115, z: 2.183009}
+  m_Center: {x: 0.10350329, y: 4.7484875, z: -0.7845333}
 --- !u!1001 &414376989
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13840,7 +13852,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1461044543}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d111f3acb1908be4dbaf27a3b9d80a21, type: 3}
   m_Name: 
@@ -14517,7 +14529,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
