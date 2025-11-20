@@ -1217,10 +1217,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   solidIngredients:
   - {fileID: 888025931}
-  - {fileID: 453902624}
   - {fileID: 986107464}
-  pourIngredients: []
-  pourZone: {fileID: 0}
+  - {fileID: 2783413700082105817}
+  pourIngredients:
+  - {fileID: 453902624}
+  - {fileID: 1531311380}
+  - {fileID: 2030561299}
+  pourZone: {fileID: 1652533558}
   rotationThreshold: 90
   collectClip: {fileID: 8300000, guid: c1b4e6aa2539441da86416554c26df7c, type: 3}
   collectVolume: 1
