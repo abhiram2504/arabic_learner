@@ -98,6 +98,39 @@ public class HummusBowlChecker : MonoBehaviour
             ShowFailure("Not all ingredients have been added!");
     }
 
+    /// <summary>
+    /// Manually reset the scene without waiting for delay. Useful for testing or immediate reset.
+    /// </summary>
+    public void ResetSceneImmediately()
+    {
+        if (showDebugMessages)
+            Debug.Log("ResetSceneImmediately called");
+
+        // Reset food items
+        if (foodItemsScript != null)
+        {
+            foodItemsScript.Reset();
+        }
+
+        // Reset timer
+        if (enableTimer)
+        {
+            StopTimer();
+            StartTimer();
+        }
+
+        // Hide fail canvas
+        if (failCanvas != null)
+            failCanvas.gameObject.SetActive(false);
+
+        // Hide hummus bowl
+        if (hummusBowl != null)
+            hummusBowl.SetActive(false);
+
+        // Reload scene
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
+    }
+
     void ShowSuccess()
     {
         if (failCanvas != null)
@@ -109,6 +142,9 @@ public class HummusBowlChecker : MonoBehaviour
 
     void ShowFailure(string reason)
     {
+        if (showDebugMessages)
+            Debug.Log("ShowFailure called: " + reason);
+
         if (hummusBowl != null)
             hummusBowl.SetActive(false);
 
@@ -122,6 +158,8 @@ public class HummusBowlChecker : MonoBehaviour
         // Reset the food items state before reloading
         if (foodItemsScript != null)
         {
+            if (showDebugMessages)
+                Debug.Log("Resetting FoodItems...");
             foodItemsScript.Reset();
         }
 
@@ -132,19 +170,27 @@ public class HummusBowlChecker : MonoBehaviour
         }
 
         if (reloadSceneOnFailure)
+        {
+            if (showDebugMessages)
+                Debug.Log($"Starting scene reload after {reloadDelay} seconds...");
             StartCoroutine(ReloadSceneAfterDelay());
+        }
+        else
+        {
+            if (showDebugMessages)
+                Debug.LogWarning("Scene reload is disabled (reloadSceneOnFailure = false)");
+        }
     }
 
     IEnumerator ReloadSceneAfterDelay()
     {
         yield return new WaitForSeconds(reloadDelay);
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
 
-        // Wait until the scene is fully loaded
-        while (!asyncLoad.isDone)
-        {
-            yield return null;
-        }
+        if (showDebugMessages)
+            Debug.Log("Reloading scene: " + SceneManager.GetActiveScene().name);
+
+        // Use LoadScene instead of LoadSceneAsync for more reliable scene reloading
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
     }
 
     // ---------------- VR SAFE UI ----------------

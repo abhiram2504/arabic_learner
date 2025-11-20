@@ -119,16 +119,43 @@ public class FoodItems : MonoBehaviour
         // Reactivate all solid ingredients that were deactivated
         foreach (var item in solidIngredients)
         {
+            if (item != null)
+            {
+                if (!item.activeSelf)
+                {
+                    item.SetActive(true);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("FoodItems.Reset(): A solid ingredient in the list is null (may have been destroyed). Scene reload will restore it.");
+            }
+        }
+
+        // Reactivate all pourable ingredients (they shouldn't be deactivated, but check anyway)
+        foreach (var item in pourIngredients)
+        {
             if (item != null && !item.activeSelf)
             {
                 item.SetActive(true);
             }
         }
 
-        // Reset the tracking sets
-        remainingSolids = new HashSet<GameObject>(solidIngredients);
-        remainingPourables = new HashSet<GameObject>(pourIngredients);
+        // Reset the tracking sets - filter out null items
+        remainingSolids = new HashSet<GameObject>();
+        foreach (var item in solidIngredients)
+        {
+            if (item != null)
+                remainingSolids.Add(item);
+        }
 
-        Debug.Log("FoodItems reset: All ingredients reactivated and tracking reset.");
+        remainingPourables = new HashSet<GameObject>();
+        foreach (var item in pourIngredients)
+        {
+            if (item != null)
+                remainingPourables.Add(item);
+        }
+
+        Debug.Log($"FoodItems reset: {remainingSolids.Count} solid ingredients and {remainingPourables.Count} pourable ingredients tracked.");
     }
 }
