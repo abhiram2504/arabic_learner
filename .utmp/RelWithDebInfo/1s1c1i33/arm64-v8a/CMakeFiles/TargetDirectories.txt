@@ -1,8 +1,0 @@
-C:/Coding/VRGame/arabic_learner/.utmp/RelWithDebInfo/1s1c1i33/arm64-v8a/CMakeFiles/edit_cache.dir
-C:/Coding/VRGame/arabic_learner/.utmp/RelWithDebInfo/1s1c1i33/arm64-v8a/CMakeFiles/rebuild_cache.dir
-C:/Coding/VRGame/arabic_learner/.utmp/RelWithDebInfo/1s1c1i33/arm64-v8a/GameActivity/CMakeFiles/game.dir
-C:/Coding/VRGame/arabic_learner/.utmp/RelWithDebInfo/1s1c1i33/arm64-v8a/GameActivity/CMakeFiles/edit_cache.dir
-C:/Coding/VRGame/arabic_learner/.utmp/RelWithDebInfo/1s1c1i33/arm64-v8a/GameActivity/CMakeFiles/rebuild_cache.dir
-C:/Coding/VRGame/arabic_learner/.utmp/RelWithDebInfo/1s1c1i33/arm64-v8a/FramePacing/CMakeFiles/swappywrapper.dir
-C:/Coding/VRGame/arabic_learner/.utmp/RelWithDebInfo/1s1c1i33/arm64-v8a/FramePacing/CMakeFiles/edit_cache.dir
-C:/Coding/VRGame/arabic_learner/.utmp/RelWithDebInfo/1s1c1i33/arm64-v8a/FramePacing/CMakeFiles/rebuild_cache.dir
