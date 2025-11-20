@@ -14525,7 +14525,7 @@ MonoBehaviour:
   enableTimer: 1
   timeLimit: 300
   failMessage: Fail! Try again from this scene
-  reloadSceneOnFailure: 0
+  reloadSceneOnFailure: 1
   reloadDelay: 3
   showDebugMessages: 0
 --- !u!4 &1529778122

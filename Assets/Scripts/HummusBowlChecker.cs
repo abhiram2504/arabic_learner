@@ -29,9 +29,11 @@ public class HummusBowlChecker : MonoBehaviour
     private Text failText;
     private Text timerText;
     private Canvas timerCanvas;
+
     private float timerStartTime;
     private bool timerRunning = false;
     private Coroutine timerCoroutine;
+    private bool isFailing = false;
 
     void Start()
     {
@@ -66,7 +68,7 @@ public class HummusBowlChecker : MonoBehaviour
 #if UNITY_XR_INTERACTION_TOOLKIT
         if (xrButton != null)
         {
-            XRSimpleInteractable interactable = xrButton.GetComponent<XRSimpleInteractable>();
+            var interactable = xrButton.GetComponent<XRSimpleInteractable>();
             if (interactable != null)
                 interactable.onSelectEntered.AddListener(OnButtonPressed);
         }
@@ -80,14 +82,28 @@ public class HummusBowlChecker : MonoBehaviour
     }
 #endif
 
+    void OnDestroy()
+    {
+#if UNITY_XR_INTERACTION_TOOLKIT
+        if (xrButton != null)
+        {
+            var interactable = xrButton.GetComponent<XRSimpleInteractable>();
+            if (interactable != null)
+                interactable.onSelectEntered.RemoveListener(OnButtonPressed);
+        }
+#endif
+    }
+
     void Update()
     {
         if (timerRunning && timerText != null)
-            UpdateTimerDisplay();
+            UpdateTimerUI();
     }
 
     public void CheckConditions()
     {
+        if (isFailing) return;
+
         StopTimer();
 
         bool success = foodItemsScript != null && foodItemsScript.IsComplete();
@@ -96,39 +112,6 @@ public class HummusBowlChecker : MonoBehaviour
             ShowSuccess();
         else
             ShowFailure("Not all ingredients have been added!");
-    }
-
-    /// <summary>
-    /// Manually reset the scene without waiting for delay. Useful for testing or immediate reset.
-    /// </summary>
-    public void ResetSceneImmediately()
-    {
-        if (showDebugMessages)
-            Debug.Log("ResetSceneImmediately called");
-
-        // Reset food items
-        if (foodItemsScript != null)
-        {
-            foodItemsScript.Reset();
-        }
-
-        // Reset timer
-        if (enableTimer)
-        {
-            StopTimer();
-            StartTimer();
-        }
-
-        // Hide fail canvas
-        if (failCanvas != null)
-            failCanvas.gameObject.SetActive(false);
-
-        // Hide hummus bowl
-        if (hummusBowl != null)
-            hummusBowl.SetActive(false);
-
-        // Reload scene
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
     }
 
     void ShowSuccess()
@@ -142,8 +125,11 @@ public class HummusBowlChecker : MonoBehaviour
 
     void ShowFailure(string reason)
     {
+        if (isFailing) return;
+        isFailing = true;
+
         if (showDebugMessages)
-            Debug.Log("ShowFailure called: " + reason);
+            Debug.Log("ShowFailure: " + reason);
 
         if (hummusBowl != null)
             hummusBowl.SetActive(false);
@@ -155,41 +141,17 @@ public class HummusBowlChecker : MonoBehaviour
                 failText.text = failMessage + "\n\n" + reason;
         }
 
-        // Reset the food items state before reloading
+        // ✅ Use your existing reset
         if (foodItemsScript != null)
-        {
-            if (showDebugMessages)
-                Debug.Log("Resetting FoodItems...");
             foodItemsScript.Reset();
-        }
-
-        // Reset timer if it was running
-        if (enableTimer)
-        {
-            StopTimer();
-        }
 
         if (reloadSceneOnFailure)
-        {
-            if (showDebugMessages)
-                Debug.Log($"Starting scene reload after {reloadDelay} seconds...");
             StartCoroutine(ReloadSceneAfterDelay());
-        }
-        else
-        {
-            if (showDebugMessages)
-                Debug.LogWarning("Scene reload is disabled (reloadSceneOnFailure = false)");
-        }
     }
 
     IEnumerator ReloadSceneAfterDelay()
     {
         yield return new WaitForSeconds(reloadDelay);
-
-        if (showDebugMessages)
-            Debug.Log("Reloading scene: " + SceneManager.GetActiveScene().name);
-
-        // Use LoadScene instead of LoadSceneAsync for more reliable scene reloading
         SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
     }
 
@@ -200,9 +162,9 @@ public class HummusBowlChecker : MonoBehaviour
         GameObject canvasObj = new GameObject("Fail Canvas");
         failCanvas = canvasObj.AddComponent<Canvas>();
         failCanvas.renderMode = RenderMode.ScreenSpaceCamera;
-        failCanvas.worldCamera = Camera.main;
-        failCanvas.planeDistance = 1f;
+        failCanvas.planeDistance = 1.5f;
         failCanvas.sortingOrder = 200;
+        StartCoroutine(AssignCameraWhenReady(failCanvas));
 
         CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -231,9 +193,9 @@ public class HummusBowlChecker : MonoBehaviour
         GameObject canvasObj = new GameObject("Timer Canvas");
         timerCanvas = canvasObj.AddComponent<Canvas>();
         timerCanvas.renderMode = RenderMode.ScreenSpaceCamera;
-        timerCanvas.worldCamera = Camera.main;
-        timerCanvas.planeDistance = 1f;
+        timerCanvas.planeDistance = 1.5f;
         timerCanvas.sortingOrder = 150;
+        StartCoroutine(AssignCameraWhenReady(timerCanvas));
 
         CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -253,6 +215,14 @@ public class HummusBowlChecker : MonoBehaviour
         RectTransform rt = textObj.GetComponent<RectTransform>();
         rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.95f);
         rt.sizeDelta = new Vector2(400, 100);
+    }
+
+    IEnumerator AssignCameraWhenReady(Canvas canvas)
+    {
+        while (Camera.main == null)
+            yield return null;
+
+        canvas.worldCamera = Camera.main;
     }
 
     void StartTimer()
@@ -283,12 +253,12 @@ public class HummusBowlChecker : MonoBehaviour
         }
     }
 
-    void UpdateTimerDisplay()
+    // ✅ RENAMED METHOD (fixes CS0111)
+    void UpdateTimerUI()
     {
         float remaining = Mathf.Max(0f, timeLimit - (Time.time - timerStartTime));
         int minutes = Mathf.FloorToInt(remaining / 60);
         int seconds = Mathf.FloorToInt(remaining % 60);
         timerText.text = $"{minutes:D2}:{seconds:D2}";
-
     }
 }
