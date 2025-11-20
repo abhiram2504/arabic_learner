@@ -102,28 +102,53 @@ public class SceneTransition : MonoBehaviour
         // Find or create canvas
         if (timerCanvas == null)
         {
-            // Look for a ScreenSpaceOverlay canvas first
+            // Look for existing canvas first
             Canvas[] allCanvases = FindObjectsOfType<Canvas>();
             foreach (Canvas canvas in allCanvases)
             {
-                if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+                // Prefer ScreenSpaceCamera for VR, but accept ScreenSpaceOverlay for desktop
+                if (canvas.renderMode == RenderMode.ScreenSpaceCamera || 
+                    canvas.renderMode == RenderMode.ScreenSpaceOverlay)
                 {
                     timerCanvas = canvas;
                     break;
                 }
             }
             
-            // If no ScreenSpaceOverlay canvas found, create one
+            // If no suitable canvas found, create one
             if (timerCanvas == null)
             {
                 if (showDebugMessages)
                 {
-                    Debug.Log("SceneTransition: No ScreenSpaceOverlay Canvas found, creating new one...");
+                    Debug.Log("SceneTransition: No suitable Canvas found, creating new one...");
                 }
                 
                 GameObject canvasObj = new GameObject("Timer Canvas");
                 timerCanvas = canvasObj.AddComponent<Canvas>();
-                timerCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                
+                // Detect VR and use appropriate render mode
+                Camera vrCamera = FindVRCamera();
+                if (vrCamera != null)
+                {
+                    // VR mode: Use ScreenSpaceCamera
+                    timerCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+                    timerCanvas.worldCamera = vrCamera;
+                    timerCanvas.planeDistance = 2f; // Distance from camera
+                    if (showDebugMessages)
+                    {
+                        Debug.Log("SceneTransition: VR detected - using ScreenSpaceCamera mode");
+                    }
+                }
+                else
+                {
+                    // Desktop mode: Use ScreenSpaceOverlay
+                    timerCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                    if (showDebugMessages)
+                    {
+                        Debug.Log("SceneTransition: Desktop mode - using ScreenSpaceOverlay");
+                    }
+                }
+                
                 timerCanvas.sortingOrder = 100; // High sorting order to ensure it's on top
                 
                 CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
@@ -137,7 +162,21 @@ public class SceneTransition : MonoBehaviour
             {
                 if (showDebugMessages)
                 {
-                    Debug.Log($"SceneTransition: Found existing ScreenSpaceOverlay Canvas: {timerCanvas.name}");
+                    Debug.Log($"SceneTransition: Found existing Canvas: {timerCanvas.name}, RenderMode: {timerCanvas.renderMode}");
+                }
+                
+                // If using ScreenSpaceCamera, ensure camera is assigned
+                if (timerCanvas.renderMode == RenderMode.ScreenSpaceCamera && timerCanvas.worldCamera == null)
+                {
+                    Camera vrCamera = FindVRCamera();
+                    if (vrCamera != null)
+                    {
+                        timerCanvas.worldCamera = vrCamera;
+                        if (showDebugMessages)
+                        {
+                            Debug.Log("SceneTransition: Assigned VR camera to existing canvas");
+                        }
+                    }
                 }
                 
                 // Ensure the canvas has a high sorting order
@@ -186,7 +225,14 @@ public class SceneTransition : MonoBehaviour
             rectTransform.anchorMax = timerPosition;
             rectTransform.pivot = new Vector2(0.5f, 0.5f);
             rectTransform.anchoredPosition = Vector2.zero;
-            rectTransform.sizeDelta = new Vector2(400, 100);
+            rectTransform.sizeDelta = new Vector2(600, 150); // Larger size for VR visibility
+            
+            // Make text more visible in VR
+            if (timerCanvas.renderMode == RenderMode.ScreenSpaceCamera)
+            {
+                timerText.fontSize = fontSize + 12; // Larger font for VR
+                timerText.color = new Color(timerColor.r, timerColor.g, timerColor.b, 1f); // Full opacity
+            }
             
             // Ensure the text object is active and visible
             textObj.SetActive(true);
@@ -396,6 +442,49 @@ public class SceneTransition : MonoBehaviour
         {
             timerText.gameObject.SetActive(visible);
         }
+        if (timerCanvas != null)
+        {
+            timerCanvas.gameObject.SetActive(visible);
+        }
+    }
+    
+    /// <summary>
+    /// Find VR camera (XR Origin or Main Camera with XR components)
+    /// </summary>
+    Camera FindVRCamera()
+    {
+        // Try to find XR Origin camera
+        Camera[] allCameras = FindObjectsOfType<Camera>();
+        foreach (Camera cam in allCameras)
+        {
+            // Check if it's tagged as MainCamera (common for VR)
+            if (cam.CompareTag("MainCamera"))
+            {
+                return cam;
+            }
+            // Check if camera name suggests VR
+            if (cam.name.Contains("XR") || cam.name.Contains("VR") || cam.name.Contains("Camera"))
+            {
+                return cam;
+            }
+        }
+        
+        // Fallback: try Camera.main
+        if (Camera.main != null)
+        {
+            return Camera.main;
+        }
+        
+        // Last resort: find any active camera
+        foreach (Camera cam in allCameras)
+        {
+            if (cam.gameObject.activeInHierarchy && cam.enabled)
+            {
+                return cam;
+            }
+        }
+        
+        return null;
     }
 }
 

@@ -8897,11 +8897,11 @@ MonoBehaviour:
     waitForCompletion: 1
   - audioClip: {fileID: 8300000, guid: 09678bdcbde394cf09dab568e6147d3b, type: 3}
     instructionText: 
-    delayBeforePlaying: 10
+    delayBeforePlaying: 7
     waitForCompletion: 1
   - audioClip: {fileID: 8300000, guid: 95a2921c2eb85440a8336a5659494bbf, type: 3}
     instructionText: 
-    delayBeforePlaying: 10
+    delayBeforePlaying: 7
     waitForCompletion: 1
   playOnStart: 1
   startDelay: 1

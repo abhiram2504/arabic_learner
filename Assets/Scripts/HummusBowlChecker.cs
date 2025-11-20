@@ -282,7 +282,9 @@ public class HummusBowlChecker : MonoBehaviour
     {
         // Find or create canvas
         Canvas existingCanvas = FindObjectOfType<Canvas>();
-        if (existingCanvas != null && existingCanvas.renderMode == RenderMode.ScreenSpaceOverlay)
+        if (existingCanvas != null && 
+            (existingCanvas.renderMode == RenderMode.ScreenSpaceOverlay || 
+             existingCanvas.renderMode == RenderMode.ScreenSpaceCamera))
         {
             failCanvas = existingCanvas;
         }
@@ -290,15 +292,44 @@ public class HummusBowlChecker : MonoBehaviour
         {
             GameObject canvasObj = new GameObject("Fail Canvas");
             failCanvas = canvasObj.AddComponent<Canvas>();
-            failCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            
+            // Detect VR and use appropriate render mode
+            Camera vrCamera = FindVRCamera();
+            if (vrCamera != null)
+            {
+                // VR mode: Use ScreenSpaceCamera
+                failCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+                failCanvas.worldCamera = vrCamera;
+                failCanvas.planeDistance = 1.5f; // Closer for fail screen
+                if (showDebugMessages)
+                {
+                    Debug.Log("HummusBowlChecker: VR detected - using ScreenSpaceCamera for fail canvas");
+                }
+            }
+            else
+            {
+                // Desktop mode: Use ScreenSpaceOverlay
+                failCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            }
+            
             failCanvas.sortingOrder = 200;
-
+            
             CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
             scaler.matchWidthOrHeight = 0.5f;
-
+            
             canvasObj.AddComponent<GraphicRaycaster>();
+        }
+        
+        // Ensure camera is assigned if using ScreenSpaceCamera
+        if (failCanvas.renderMode == RenderMode.ScreenSpaceCamera && failCanvas.worldCamera == null)
+        {
+            Camera vrCamera = FindVRCamera();
+            if (vrCamera != null)
+            {
+                failCanvas.worldCamera = vrCamera;
+            }
         }
 
         // Create fail text
@@ -312,7 +343,15 @@ public class HummusBowlChecker : MonoBehaviour
         {
             failText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
         }
-        failText.fontSize = 48;
+        
+        // Larger font for VR
+        int baseFontSize = 48;
+        if (failCanvas.renderMode == RenderMode.ScreenSpaceCamera)
+        {
+            baseFontSize = 64; // Larger for VR
+        }
+        failText.fontSize = baseFontSize;
+        
         failText.color = Color.red;
         failText.alignment = TextAnchor.MiddleCenter;
         failText.horizontalOverflow = HorizontalWrapMode.Overflow;
@@ -323,7 +362,16 @@ public class HummusBowlChecker : MonoBehaviour
         rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
         rectTransform.pivot = new Vector2(0.5f, 0.5f);
         rectTransform.anchoredPosition = Vector2.zero;
-        rectTransform.sizeDelta = new Vector2(800, 200);
+        
+        // Larger size for VR
+        if (failCanvas.renderMode == RenderMode.ScreenSpaceCamera)
+        {
+            rectTransform.sizeDelta = new Vector2(1200, 300);
+        }
+        else
+        {
+            rectTransform.sizeDelta = new Vector2(800, 200);
+        }
 
         // Hide canvas initially
         failCanvas.gameObject.SetActive(false);
@@ -335,7 +383,9 @@ public class HummusBowlChecker : MonoBehaviour
         Canvas[] allCanvases = FindObjectsOfType<Canvas>();
         foreach (Canvas canvas in allCanvases)
         {
-            if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+            // Accept both ScreenSpaceCamera (VR) and ScreenSpaceOverlay (desktop)
+            if (canvas.renderMode == RenderMode.ScreenSpaceCamera || 
+                canvas.renderMode == RenderMode.ScreenSpaceOverlay)
             {
                 timerCanvas = canvas;
                 break;
@@ -346,7 +396,30 @@ public class HummusBowlChecker : MonoBehaviour
         {
             GameObject canvasObj = new GameObject("Timer Canvas");
             timerCanvas = canvasObj.AddComponent<Canvas>();
-            timerCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            
+            // Detect VR and use appropriate render mode
+            Camera vrCamera = FindVRCamera();
+            if (vrCamera != null)
+            {
+                // VR mode: Use ScreenSpaceCamera
+                timerCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+                timerCanvas.worldCamera = vrCamera;
+                timerCanvas.planeDistance = 2f; // Distance from camera
+                if (showDebugMessages)
+                {
+                    Debug.Log("HummusBowlChecker: VR detected - using ScreenSpaceCamera for timer");
+                }
+            }
+            else
+            {
+                // Desktop mode: Use ScreenSpaceOverlay
+                timerCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                if (showDebugMessages)
+                {
+                    Debug.Log("HummusBowlChecker: Desktop mode - using ScreenSpaceOverlay for timer");
+                }
+            }
+            
             timerCanvas.sortingOrder = 150;
 
             CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
@@ -355,6 +428,22 @@ public class HummusBowlChecker : MonoBehaviour
             scaler.matchWidthOrHeight = 0.5f;
 
             canvasObj.AddComponent<GraphicRaycaster>();
+        }
+        else
+        {
+            // If using ScreenSpaceCamera, ensure camera is assigned
+            if (timerCanvas.renderMode == RenderMode.ScreenSpaceCamera && timerCanvas.worldCamera == null)
+            {
+                Camera vrCamera = FindVRCamera();
+                if (vrCamera != null)
+                {
+                    timerCanvas.worldCamera = vrCamera;
+                    if (showDebugMessages)
+                    {
+                        Debug.Log("HummusBowlChecker: Assigned VR camera to existing timer canvas");
+                    }
+                }
+            }
         }
 
         // Create timer text
@@ -367,7 +456,14 @@ public class HummusBowlChecker : MonoBehaviour
         {
             timerText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
         }
-        timerText.fontSize = 36;
+        // Make text larger and more visible for VR
+        int baseFontSize = 36;
+        if (timerCanvas.renderMode == RenderMode.ScreenSpaceCamera)
+        {
+            baseFontSize = 48; // Larger font for VR
+        }
+        
+        timerText.fontSize = baseFontSize;
         timerText.color = Color.white;
         timerText.alignment = TextAnchor.UpperCenter;
         timerText.horizontalOverflow = HorizontalWrapMode.Overflow;
@@ -378,9 +474,57 @@ public class HummusBowlChecker : MonoBehaviour
         rectTransform.anchorMax = new Vector2(0.5f, 0.95f);
         rectTransform.pivot = new Vector2(0.5f, 0.5f);
         rectTransform.anchoredPosition = Vector2.zero;
-        rectTransform.sizeDelta = new Vector2(400, 100);
+        
+        // Larger size for VR visibility
+        if (timerCanvas.renderMode == RenderMode.ScreenSpaceCamera)
+        {
+            rectTransform.sizeDelta = new Vector2(600, 150);
+        }
+        else
+        {
+            rectTransform.sizeDelta = new Vector2(400, 100);
+        }
 
         textObj.SetActive(true);
+    }
+    
+    /// <summary>
+    /// Find VR camera (XR Origin or Main Camera with XR components)
+    /// </summary>
+    Camera FindVRCamera()
+    {
+        // Try to find XR Origin camera
+        Camera[] allCameras = FindObjectsOfType<Camera>();
+        foreach (Camera cam in allCameras)
+        {
+            // Check if it's tagged as MainCamera (common for VR)
+            if (cam.CompareTag("MainCamera"))
+            {
+                return cam;
+            }
+            // Check if camera name suggests VR
+            if (cam.name.Contains("XR") || cam.name.Contains("VR") || cam.name.Contains("Camera"))
+            {
+                return cam;
+            }
+        }
+        
+        // Fallback: try Camera.main
+        if (Camera.main != null)
+        {
+            return Camera.main;
+        }
+        
+        // Last resort: find any active camera
+        foreach (Camera cam in allCameras)
+        {
+            if (cam.gameObject.activeInHierarchy && cam.enabled)
+            {
+                return cam;
+            }
+        }
+        
+        return null;
     }
 
     void StartTimer()
