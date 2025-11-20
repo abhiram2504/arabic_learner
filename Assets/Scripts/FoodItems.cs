@@ -113,4 +113,22 @@ public class FoodItems : MonoBehaviour
     {
         return remainingSolids.Count == 0 && remainingPourables.Count == 0;
     }
+
+    public void Reset()
+    {
+        // Reactivate all solid ingredients that were deactivated
+        foreach (var item in solidIngredients)
+        {
+            if (item != null && !item.activeSelf)
+            {
+                item.SetActive(true);
+            }
+        }
+
+        // Reset the tracking sets
+        remainingSolids = new HashSet<GameObject>(solidIngredients);
+        remainingPourables = new HashSet<GameObject>(pourIngredients);
+
+        Debug.Log("FoodItems reset: All ingredients reactivated and tracking reset.");
+    }
 }

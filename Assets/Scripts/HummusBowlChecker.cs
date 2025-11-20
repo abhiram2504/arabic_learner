@@ -119,6 +119,18 @@ public class HummusBowlChecker : MonoBehaviour
                 failText.text = failMessage + "\n\n" + reason;
         }
 
+        // Reset the food items state before reloading
+        if (foodItemsScript != null)
+        {
+            foodItemsScript.Reset();
+        }
+
+        // Reset timer if it was running
+        if (enableTimer)
+        {
+            StopTimer();
+        }
+
         if (reloadSceneOnFailure)
             StartCoroutine(ReloadSceneAfterDelay());
     }
@@ -126,7 +138,13 @@ public class HummusBowlChecker : MonoBehaviour
     IEnumerator ReloadSceneAfterDelay()
     {
         yield return new WaitForSeconds(reloadDelay);
-        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
+
+        // Wait until the scene is fully loaded
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
     }
 
     // ---------------- VR SAFE UI ----------------
@@ -225,6 +243,6 @@ public class HummusBowlChecker : MonoBehaviour
         int minutes = Mathf.FloorToInt(remaining / 60);
         int seconds = Mathf.FloorToInt(remaining % 60);
         timerText.text = $"{minutes:D2}:{seconds:D2}";
-        
+
     }
 }
