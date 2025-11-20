@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
 public class FoodItems : MonoBehaviour
@@ -16,6 +15,14 @@ public class FoodItems : MonoBehaviour
     [Header("Rotation needed to count as pouring (degrees)")]
     public float rotationThreshold = 60f;
 
+    [Header("Audio (plays each time an item is completed)")]
+    public AudioSource audioSource;      // optional, assign an AudioSource
+    public AudioClip collectClip;        // optional, assign the sound to play
+
+    // Public output list recording names of items as they are completed
+    [Header("Output log (records completed items in order)")]
+    public List<string> outputLog = new List<string>();
+
     private HashSet<GameObject> remainingSolids;
     private HashSet<GameObject> remainingPourables;
 
@@ -23,6 +30,10 @@ public class FoodItems : MonoBehaviour
     {
         remainingSolids = new HashSet<GameObject>(solidIngredients);
         remainingPourables = new HashSet<GameObject>(pourIngredients);
+
+        // If no audioSource assigned, try to get one on the same GameObject
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -37,11 +48,17 @@ public class FoodItems : MonoBehaviour
     {
         if (remainingSolids.Contains(collision.gameObject))
         {
+            string name = collision.gameObject.name;
+
+            // Hide / collect; remove from remaining set
             collision.gameObject.SetActive(false);
             remainingSolids.Remove(collision.gameObject);
 
-            Debug.Log("Collected SOLID: " + collision.gameObject.name);
-            CheckIfFinished();
+            Debug.Log("Collected SOLID: " + name);
+
+            // record and play sound
+            RecordCompletion(name);
+            PlayCollectSound();
         }
     }
 
@@ -66,8 +83,12 @@ public class FoodItems : MonoBehaviour
         if (rotatedSideways)
         {
             Debug.Log("POURED (rotation threshold): " + item.name);
+
+            // Record and play sound BEFORE removing (so name exists)
+            RecordCompletion(item.name);
+            PlayCollectSound();
+
             remainingPourables.Remove(item);
-            CheckIfFinished();
         }
     }
 
@@ -79,15 +100,23 @@ public class FoodItems : MonoBehaviour
 
     bool IsInsidePourZone(GameObject item)
     {
-        return pourZone.bounds.Contains(item.transform.position);
+        // Simple position-in-bounds check (works with your current setup)
+        return pourZone != null && pourZone.bounds.Contains(item.transform.position);
     }
 
-    void CheckIfFinished()
+    // Adds a unique entry to the output log (keeps duplicates if desired)
+    void RecordCompletion(string itemName)
     {
-        if (remainingSolids.Count == 0 && remainingPourables.Count == 0)
+        // If you want duplicates allowed, just do outputLog.Add(itemName);
+        // Current behavior: record every completion (including duplicates).
+        outputLog.Add(itemName);
+    }
+
+    void PlayCollectSound()
+    {
+        if (audioSource != null && collectClip != null)
         {
-            Debug.Log("ALL ITEMS COMPLETE!");
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            audioSource.PlayOneShot(collectClip);
         }
     }
 }
