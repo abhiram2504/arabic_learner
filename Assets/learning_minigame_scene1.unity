@@ -2589,10 +2589,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 981667189311052595, guid: b38d10ea342ac5044a59ced4f1e2952d, type: 3}
+      propertyPath: targetSceneName
+      value: notkitchscene
+      objectReference: {fileID: 0}
+    - target: {fileID: 981667189311052595, guid: b38d10ea342ac5044a59ced4f1e2952d, type: 3}
+      propertyPath: transitionDelay
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 5667835393490234796, guid: b38d10ea342ac5044a59ced4f1e2952d, type: 3}
       propertyPath: m_Name
       value: minigame
       objectReference: {fileID: 0}
+    - target: {fileID: 7361939485634829367, guid: b38d10ea342ac5044a59ced4f1e2952d, type: 3}
+      propertyPath: m_SelectEntered.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7361939485634829367, guid: b38d10ea342ac5044a59ced4f1e2952d, type: 3}
+      propertyPath: m_SelectEntered.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 102900000, guid: 9a6af40e852ce224786b9d2a958c84d2, type: 3}
     - target: {fileID: 8181452783760710795, guid: b38d10ea342ac5044a59ced4f1e2952d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.157986
