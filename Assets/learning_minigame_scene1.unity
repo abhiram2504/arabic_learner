@@ -1676,7 +1676,7 @@ MonoBehaviour:
   masterVolume: 1
   masterPitch: 1
   backgroundMusic: {fileID: 8300000, guid: b123c9862aae54aa0b61b904e5155589, type: 3}
-  backgroundMusicVolume: 0.5
+  backgroundMusicVolume: 0.082
   playBackgroundMusicOnStart: 1
   loopBackgroundMusic: 1
 --- !u!4 &730585196
@@ -2126,8 +2126,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetSceneName: Kitchen_scene
-  transitionDelay: 10
+  transitionDelay: 15
   transitionOnStart: 1
+  autoCreateTimerUI: 1
+  timerText: {fileID: 0}
+  timerCanvas: {fileID: 0}
+  timerFormat: 1
+  timerPosition: {x: 0.5, y: 0.95}
+  fontSize: 44
+  timerColor: {r: 0, g: 0, b: 0, a: 1}
   showDebugMessages: 1
 --- !u!4 &1208463855
 Transform:
