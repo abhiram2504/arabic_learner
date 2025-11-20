@@ -7,6 +7,9 @@
 [Ll]ogs/
 [Uu]ser[Ss]ettings/
 
+.utmp/
+arabic_learner.slnx
+
 # MemoryCaptures can get excessive in size
 /[Mm]emoryCaptures/
 
