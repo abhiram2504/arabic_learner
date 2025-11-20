@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using System.Collections.Generic;
 
 public class FoodItems : MonoBehaviour
@@ -15,13 +16,12 @@ public class FoodItems : MonoBehaviour
     [Header("Rotation needed to count as pouring (degrees)")]
     public float rotationThreshold = 60f;
 
-    [Header("Audio (plays each time an item is completed)")]
-    public AudioSource audioSource;      // optional, assign an AudioSource
-    public AudioClip collectClip;        // optional, assign the sound to play
+    [Header("Sound (plays at the completed item's world position)")]
+    public AudioClip collectClip; // optional - assign clip in inspector
+    public float collectVolume = 1f;
 
-    // Public output list recording names of items as they are completed
-    [Header("Output log (records completed items in order)")]
-    public List<string> outputLog = new List<string>();
+    [Header("Event invoked when all items are completed (OUTPUT LIST)")]
+    public UnityEvent onAllItemsCompleted; // editable list of outputs in inspector
 
     private HashSet<GameObject> remainingSolids;
     private HashSet<GameObject> remainingPourables;
@@ -30,10 +30,6 @@ public class FoodItems : MonoBehaviour
     {
         remainingSolids = new HashSet<GameObject>(solidIngredients);
         remainingPourables = new HashSet<GameObject>(pourIngredients);
-
-        // If no audioSource assigned, try to get one on the same GameObject
-        if (audioSource == null)
-            audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -49,16 +45,20 @@ public class FoodItems : MonoBehaviour
         if (remainingSolids.Contains(collision.gameObject))
         {
             string name = collision.gameObject.name;
+            Vector3 soundPos = collision.gameObject.transform.position;
 
-            // Hide / collect; remove from remaining set
+            // hide / collect; remove from remaining set
             collision.gameObject.SetActive(false);
             remainingSolids.Remove(collision.gameObject);
 
             Debug.Log("Collected SOLID: " + name);
 
-            // record and play sound
-            RecordCompletion(name);
-            PlayCollectSound();
+            // play sound at the item's world position (if assigned)
+            if (collectClip != null)
+                AudioSource.PlayClipAtPoint(collectClip, soundPos, collectVolume);
+
+            // Check if all finished and invoke output event if so
+            CheckIfFinished();
         }
     }
 
@@ -84,11 +84,14 @@ public class FoodItems : MonoBehaviour
         {
             Debug.Log("POURED (rotation threshold): " + item.name);
 
-            // Record and play sound BEFORE removing (so name exists)
-            RecordCompletion(item.name);
-            PlayCollectSound();
+            // play sound at the item's world position (if assigned)
+            if (collectClip != null)
+                AudioSource.PlayClipAtPoint(collectClip, item.transform.position, collectVolume);
 
             remainingPourables.Remove(item);
+
+            // Check if all finished and invoke output event if so
+            CheckIfFinished();
         }
     }
 
@@ -100,23 +103,15 @@ public class FoodItems : MonoBehaviour
 
     bool IsInsidePourZone(GameObject item)
     {
-        // Simple position-in-bounds check (works with your current setup)
         return pourZone != null && pourZone.bounds.Contains(item.transform.position);
     }
 
-    // Adds a unique entry to the output log (keeps duplicates if desired)
-    void RecordCompletion(string itemName)
+    void CheckIfFinished()
     {
-        // If you want duplicates allowed, just do outputLog.Add(itemName);
-        // Current behavior: record every completion (including duplicates).
-        outputLog.Add(itemName);
-    }
-
-    void PlayCollectSound()
-    {
-        if (audioSource != null && collectClip != null)
+        if (remainingSolids.Count == 0 && remainingPourables.Count == 0)
         {
-            audioSource.PlayOneShot(collectClip);
+            Debug.Log("ALL ITEMS COMPLETE! Invoking output list.");
+            onAllItemsCompleted?.Invoke();
         }
     }
 }
