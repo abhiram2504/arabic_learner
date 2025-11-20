@@ -6,6 +6,7 @@ TagManager:
   tags:
   - VocabObj
   - Ingredient
+  - Button
   layers:
   - Default
   - TransparentFX

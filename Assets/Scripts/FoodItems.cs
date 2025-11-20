@@ -114,4 +114,12 @@ public class FoodItems : MonoBehaviour
             onAllItemsCompleted?.Invoke();
         }
     }
+
+    /// <summary>
+    /// Check if all items have been completed
+    /// </summary>
+    public bool IsComplete()
+    {
+        return remainingSolids.Count == 0 && remainingPourables.Count == 0;
+    }
 }
