@@ -135,14 +135,31 @@ public class HummusBowlChecker : MonoBehaviour
     {
         GameObject canvasObj = new GameObject("Fail Canvas");
         failCanvas = canvasObj.AddComponent<Canvas>();
-        failCanvas.renderMode = RenderMode.ScreenSpaceCamera;
-        failCanvas.worldCamera = Camera.main;
-        failCanvas.planeDistance = 1f;
+
+        // Find VR camera
+        Camera vrCamera = FindVRCamera();
+        if (vrCamera == null)
+        {
+            vrCamera = Camera.main;
+        }
+
+        if (vrCamera != null)
+        {
+            failCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+            failCanvas.worldCamera = vrCamera;
+            failCanvas.planeDistance = 1.2f; // Closer for fail screen
+        }
+        else
+        {
+            failCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        }
+
         failCanvas.sortingOrder = 200;
 
         CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920, 1080);
+        scaler.matchWidthOrHeight = 0.5f;
         canvasObj.AddComponent<GraphicRaycaster>();
 
         GameObject textObj = new GameObject("Fail Text");
@@ -166,67 +183,139 @@ public class HummusBowlChecker : MonoBehaviour
     {
         GameObject canvasObj = new GameObject("Timer Canvas");
         timerCanvas = canvasObj.AddComponent<Canvas>();
-        timerCanvas.renderMode = RenderMode.ScreenSpaceCamera;
-        timerCanvas.worldCamera = Camera.main;
-        timerCanvas.planeDistance = 1f;
+
+        // Find VR camera - try multiple methods
+        Camera vrCamera = FindVRCamera();
+        if (vrCamera == null)
+        {
+            vrCamera = Camera.main; // Fallback
+        }
+
+        if (vrCamera != null)
+        {
+            timerCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+            timerCanvas.worldCamera = vrCamera;
+            timerCanvas.planeDistance = 1.5f; // Distance from camera for visibility
+            if (showDebugMessages)
+            {
+                Debug.Log($"HummusBowlChecker: Timer using camera: {vrCamera.name}, distance: {timerCanvas.planeDistance}");
+            }
+        }
+        else
+        {
+            // Fallback to overlay if no camera found
+            timerCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            if (showDebugMessages)
+            {
+                Debug.LogWarning("HummusBowlChecker: No camera found for timer! Using ScreenSpaceOverlay");
+            }
+        }
+
         timerCanvas.sortingOrder = 150;
 
         CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920, 1080);
+        scaler.matchWidthOrHeight = 0.5f;
         canvasObj.AddComponent<GraphicRaycaster>();
 
         GameObject textObj = new GameObject("Timer Text");
         textObj.transform.SetParent(timerCanvas.transform, false);
 
         timerText = textObj.AddComponent<Text>();
-        timerText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf") ??
-                         Resources.GetBuiltinResource<Font>("Arial.ttf");
-        timerText.fontSize = 36;
+        timerText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        if (timerText.font == null)
+        {
+            timerText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        }
+
+        // Larger font for VR visibility
+        timerText.fontSize = 56; // Increased from 36 for better VR visibility
         timerText.color = Color.white;
         timerText.alignment = TextAnchor.UpperCenter;
+        timerText.horizontalOverflow = HorizontalWrapMode.Overflow;
+        timerText.verticalOverflow = VerticalWrapMode.Overflow;
 
         RectTransform rt = textObj.GetComponent<RectTransform>();
         rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.95f);
-        rt.sizeDelta = new Vector2(400, 100);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = Vector2.zero;
+        rt.sizeDelta = new Vector2(600, 150); // Larger size for VR
+
+        textObj.SetActive(true);
+        timerText.enabled = true;
+
+        // Force canvas update
+        Canvas.ForceUpdateCanvases();
+
+        if (showDebugMessages)
+        {
+            Debug.Log($"HummusBowlChecker: Timer created - Canvas: {timerCanvas.name}, Camera: {timerCanvas.worldCamera?.name}, Mode: {timerCanvas.renderMode}");
+        }
     }
-    
+
     /// <summary>
     /// Find VR camera (XR Origin or Main Camera with XR components)
     /// </summary>
     Camera FindVRCamera()
     {
-        // Try to find XR Origin camera
-        Camera[] allCameras = FindObjectsOfType<Camera>();
-        foreach (Camera cam in allCameras)
+        // First try Camera.main (most common in VR setups)
+        if (Camera.main != null && Camera.main.gameObject.activeInHierarchy)
         {
-            // Check if it's tagged as MainCamera (common for VR)
-            if (cam.CompareTag("MainCamera"))
+            if (showDebugMessages)
             {
-                return cam;
+                Debug.Log($"HummusBowlChecker: Using Camera.main: {Camera.main.name}");
             }
-            // Check if camera name suggests VR
-            if (cam.name.Contains("XR") || cam.name.Contains("VR") || cam.name.Contains("Camera"))
-            {
-                return cam;
-            }
-        }
-        
-        // Fallback: try Camera.main
-        if (Camera.main != null)
-        {
             return Camera.main;
         }
-        
-        // Last resort: find any active camera
+
+        // Try to find XR Origin camera or any active camera
+        Camera[] allCameras = FindObjectsOfType<Camera>();
+
+        // Priority 1: MainCamera tag
+        foreach (Camera cam in allCameras)
+        {
+            if (cam.CompareTag("MainCamera") && cam.gameObject.activeInHierarchy && cam.enabled)
+            {
+                if (showDebugMessages)
+                {
+                    Debug.Log($"HummusBowlChecker: Found MainCamera tagged camera: {cam.name}");
+                }
+                return cam;
+            }
+        }
+
+        // Priority 2: Camera with XR/VR in name
+        foreach (Camera cam in allCameras)
+        {
+            if ((cam.name.Contains("XR") || cam.name.Contains("VR") || cam.name.Contains("Camera"))
+                && cam.gameObject.activeInHierarchy && cam.enabled)
+            {
+                if (showDebugMessages)
+                {
+                    Debug.Log($"HummusBowlChecker: Found VR camera by name: {cam.name}");
+                }
+                return cam;
+            }
+        }
+
+        // Priority 3: Any active enabled camera
         foreach (Camera cam in allCameras)
         {
             if (cam.gameObject.activeInHierarchy && cam.enabled)
             {
+                if (showDebugMessages)
+                {
+                    Debug.Log($"HummusBowlChecker: Using first active camera: {cam.name}");
+                }
                 return cam;
             }
         }
-        
+
+        if (showDebugMessages)
+        {
+            Debug.LogWarning("HummusBowlChecker: No camera found! Timer may not be visible.");
+        }
         return null;
     }
 
@@ -260,10 +349,31 @@ public class HummusBowlChecker : MonoBehaviour
 
     void UpdateTimerDisplay()
     {
+        if (timerText == null || !timerRunning) return;
+
         float remaining = Mathf.Max(0f, timeLimit - (Time.time - timerStartTime));
         int minutes = Mathf.FloorToInt(remaining / 60);
         int seconds = Mathf.FloorToInt(remaining % 60);
         timerText.text = $"{minutes:D2}:{seconds:D2}";
-        
+
+        // Ensure timer is visible
+        if (!timerText.gameObject.activeSelf)
+        {
+            timerText.gameObject.SetActive(true);
+        }
+        if (timerCanvas != null && !timerCanvas.gameObject.activeSelf)
+        {
+            timerCanvas.gameObject.SetActive(true);
+        }
+
+        // Change color as time runs out
+        if (remaining < 60f)
+        {
+            timerText.color = Color.Lerp(Color.red, Color.white, remaining / 60f);
+        }
+        else
+        {
+            timerText.color = Color.white;
+        }
     }
 }

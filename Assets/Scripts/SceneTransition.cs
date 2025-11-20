@@ -126,26 +126,33 @@ public class SceneTransition : MonoBehaviour
                 GameObject canvasObj = new GameObject("Timer Canvas");
                 timerCanvas = canvasObj.AddComponent<Canvas>();
                 
-                // Detect VR and use appropriate render mode
+                // Always use ScreenSpaceCamera for VR compatibility
+                // This works for both VR and desktop
                 Camera vrCamera = FindVRCamera();
+                if (vrCamera == null)
+                {
+                    // Fallback: try Camera.main one more time
+                    vrCamera = Camera.main;
+                }
+                
                 if (vrCamera != null)
                 {
-                    // VR mode: Use ScreenSpaceCamera
+                    // Use ScreenSpaceCamera mode (works in VR and desktop)
                     timerCanvas.renderMode = RenderMode.ScreenSpaceCamera;
                     timerCanvas.worldCamera = vrCamera;
-                    timerCanvas.planeDistance = 2f; // Distance from camera
+                    timerCanvas.planeDistance = 1.5f; // Distance from camera (closer for better visibility)
                     if (showDebugMessages)
                     {
-                        Debug.Log("SceneTransition: VR detected - using ScreenSpaceCamera mode");
+                        Debug.Log($"SceneTransition: Using ScreenSpaceCamera mode with camera: {vrCamera.name}, distance: {timerCanvas.planeDistance}");
                     }
                 }
                 else
                 {
-                    // Desktop mode: Use ScreenSpaceOverlay
+                    // Last resort: ScreenSpaceOverlay (won't work in VR but might work in editor)
                     timerCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
                     if (showDebugMessages)
                     {
-                        Debug.Log("SceneTransition: Desktop mode - using ScreenSpaceOverlay");
+                        Debug.LogWarning("SceneTransition: No camera found! Using ScreenSpaceOverlay (may not work in VR)");
                     }
                 }
                 
@@ -213,7 +220,23 @@ public class SceneTransition : MonoBehaviour
                 timerText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
             }
             
-            timerText.fontSize = fontSize;
+            // Make text larger and more visible for VR
+            int actualFontSize = fontSize;
+            Vector2 actualSize = new Vector2(400, 100);
+            
+            if (timerCanvas.renderMode == RenderMode.ScreenSpaceCamera)
+            {
+                actualFontSize = fontSize + 20; // Much larger font for VR
+                actualSize = new Vector2(800, 200); // Larger size for VR
+                timerText.color = new Color(timerColor.r, timerColor.g, timerColor.b, 1f); // Full opacity
+            }
+            else
+            {
+                actualFontSize = fontSize;
+                actualSize = new Vector2(400, 100);
+            }
+            
+            timerText.fontSize = actualFontSize;
             timerText.color = timerColor;
             timerText.alignment = TextAnchor.UpperCenter;
             timerText.horizontalOverflow = HorizontalWrapMode.Overflow;
@@ -225,14 +248,7 @@ public class SceneTransition : MonoBehaviour
             rectTransform.anchorMax = timerPosition;
             rectTransform.pivot = new Vector2(0.5f, 0.5f);
             rectTransform.anchoredPosition = Vector2.zero;
-            rectTransform.sizeDelta = new Vector2(600, 150); // Larger size for VR visibility
-            
-            // Make text more visible in VR
-            if (timerCanvas.renderMode == RenderMode.ScreenSpaceCamera)
-            {
-                timerText.fontSize = fontSize + 12; // Larger font for VR
-                timerText.color = new Color(timerColor.r, timerColor.g, timerColor.b, 1f); // Full opacity
-            }
+            rectTransform.sizeDelta = actualSize;
             
             // Ensure the text object is active and visible
             textObj.SetActive(true);
@@ -453,37 +469,63 @@ public class SceneTransition : MonoBehaviour
     /// </summary>
     Camera FindVRCamera()
     {
-        // Try to find XR Origin camera
-        Camera[] allCameras = FindObjectsOfType<Camera>();
-        foreach (Camera cam in allCameras)
+        // First try Camera.main (most common in VR setups)
+        if (Camera.main != null && Camera.main.gameObject.activeInHierarchy)
         {
-            // Check if it's tagged as MainCamera (common for VR)
-            if (cam.CompareTag("MainCamera"))
+            if (showDebugMessages)
             {
-                return cam;
+                Debug.Log($"SceneTransition: Using Camera.main: {Camera.main.name}");
             }
-            // Check if camera name suggests VR
-            if (cam.name.Contains("XR") || cam.name.Contains("VR") || cam.name.Contains("Camera"))
-            {
-                return cam;
-            }
-        }
-        
-        // Fallback: try Camera.main
-        if (Camera.main != null)
-        {
             return Camera.main;
         }
         
-        // Last resort: find any active camera
+        // Try to find XR Origin camera or any active camera
+        Camera[] allCameras = FindObjectsOfType<Camera>();
+        
+        // Priority 1: MainCamera tag
+        foreach (Camera cam in allCameras)
+        {
+            if (cam.CompareTag("MainCamera") && cam.gameObject.activeInHierarchy && cam.enabled)
+            {
+                if (showDebugMessages)
+                {
+                    Debug.Log($"SceneTransition: Found MainCamera tagged camera: {cam.name}");
+                }
+                return cam;
+            }
+        }
+        
+        // Priority 2: Camera with XR/VR in name
+        foreach (Camera cam in allCameras)
+        {
+            if ((cam.name.Contains("XR") || cam.name.Contains("VR") || cam.name.Contains("Camera")) 
+                && cam.gameObject.activeInHierarchy && cam.enabled)
+            {
+                if (showDebugMessages)
+                {
+                    Debug.Log($"SceneTransition: Found VR camera by name: {cam.name}");
+                }
+                return cam;
+            }
+        }
+        
+        // Priority 3: Any active enabled camera
         foreach (Camera cam in allCameras)
         {
             if (cam.gameObject.activeInHierarchy && cam.enabled)
             {
+                if (showDebugMessages)
+                {
+                    Debug.Log($"SceneTransition: Using first active camera: {cam.name}");
+                }
                 return cam;
             }
         }
         
+        if (showDebugMessages)
+        {
+            Debug.LogWarning("SceneTransition: No camera found! Timer may not be visible.");
+        }
         return null;
     }
 }
