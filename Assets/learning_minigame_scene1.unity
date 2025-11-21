@@ -981,7 +981,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CameraFloorOffsetObject: {fileID: 964849209}
-  m_RequestedTrackingMode: 0
+  m_RequestedTrackingMode: 1
   m_TrackingOriginMode: 1
   m_TrackingSpace: 0
   m_CameraYOffset: 1.36144
@@ -1287,6 +1287,17 @@ PrefabInstance:
       addedObject: {fileID: 362771653}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27024f5809f4a4347b9cd7f26a1bdf93, type: 3}
+--- !u!114 &1253591109 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 981667189311052595, guid: b38d10ea342ac5044a59ced4f1e2952d, type: 3}
+  m_PrefabInstance: {fileID: 1127757067602792679}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1261104804
 GameObject:
   m_ObjectHideFlags: 0
@@ -2595,7 +2606,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 981667189311052595, guid: b38d10ea342ac5044a59ced4f1e2952d, type: 3}
       propertyPath: transitionDelay
-      value: 15
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 981667189311052595, guid: b38d10ea342ac5044a59ced4f1e2952d, type: 3}
+      propertyPath: transitionOnStart
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5667835393490234796, guid: b38d10ea342ac5044a59ced4f1e2952d, type: 3}
       propertyPath: m_Name
@@ -2606,9 +2621,33 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7361939485634829367, guid: b38d10ea342ac5044a59ced4f1e2952d, type: 3}
+      propertyPath: m_SelectEntered.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1253591109}
+    - target: {fileID: 7361939485634829367, guid: b38d10ea342ac5044a59ced4f1e2952d, type: 3}
       propertyPath: m_SelectEntered.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 102900000, guid: 9a6af40e852ce224786b9d2a958c84d2, type: 3}
+      objectReference: {fileID: 1253591109}
+    - target: {fileID: 7361939485634829367, guid: b38d10ea342ac5044a59ced4f1e2952d, type: 3}
+      propertyPath: m_SelectEntered.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: StartTransition
+      objectReference: {fileID: 0}
+    - target: {fileID: 7361939485634829367, guid: b38d10ea342ac5044a59ced4f1e2952d, type: 3}
+      propertyPath: m_SelectEntered.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: StartTransition
+      objectReference: {fileID: 0}
+    - target: {fileID: 7361939485634829367, guid: b38d10ea342ac5044a59ced4f1e2952d, type: 3}
+      propertyPath: m_SelectEntered.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SceneTransition, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 7361939485634829367, guid: b38d10ea342ac5044a59ced4f1e2952d, type: 3}
+      propertyPath: m_SelectEntered.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: SceneTransition, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 7361939485634829367, guid: b38d10ea342ac5044a59ced4f1e2952d, type: 3}
+      propertyPath: m_SelectEntered.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 8181452783760710795, guid: b38d10ea342ac5044a59ced4f1e2952d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.157986
