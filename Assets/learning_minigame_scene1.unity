@@ -1074,10 +1074,10 @@ MonoBehaviour:
   pitchValueText: {fileID: 0}
   masterVolume: 1
   masterPitch: 1
-  backgroundMusic: {fileID: 8300000, guid: b123c9862aae54aa0b61b904e5155589, type: 3}
-  backgroundMusicVolume: 0.082
+  backgroundMusic: {fileID: 8300000, guid: b5a0a5577b6c08c4f96350cbff40dc46, type: 3}
+  backgroundMusicVolume: 1
   playBackgroundMusicOnStart: 1
-  loopBackgroundMusic: 1
+  loopBackgroundMusic: 0
 --- !u!4 &730585196
 Transform:
   m_ObjectHideFlags: 0
