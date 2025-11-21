@@ -9313,31 +9313,31 @@ MonoBehaviour:
     waitForCompletion: 1
   - audioClip: {fileID: 8300000, guid: f1c133eda75e7420ca251f4c970fbf74, type: 3}
     instructionText: 
-    delayBeforePlaying: 10
+    delayBeforePlaying: 5
     waitForCompletion: 1
   - audioClip: {fileID: 8300000, guid: e0641ff7ca7bb49a4be9239629a66e84, type: 3}
     instructionText: 
-    delayBeforePlaying: 10
+    delayBeforePlaying: 5
     waitForCompletion: 1
   - audioClip: {fileID: 8300000, guid: 200c31df5874246c59c598fc2fe1397e, type: 3}
     instructionText: 
-    delayBeforePlaying: 10
+    delayBeforePlaying: 5
     waitForCompletion: 1
   - audioClip: {fileID: 8300000, guid: b0eafcbceff8a4b688c2df665ed79b40, type: 3}
     instructionText: 
-    delayBeforePlaying: 10
+    delayBeforePlaying: 5
     waitForCompletion: 1
   - audioClip: {fileID: 8300000, guid: 6b616922eccc340769c6ef3dc0f05831, type: 3}
     instructionText: 
-    delayBeforePlaying: 10
+    delayBeforePlaying: 5
     waitForCompletion: 1
   - audioClip: {fileID: 8300000, guid: d50eea13879ef487d949d5b7cbb5e28e, type: 3}
     instructionText: 
-    delayBeforePlaying: 10
+    delayBeforePlaying: 5
     waitForCompletion: 1
   - audioClip: {fileID: 8300000, guid: d50eea13879ef487d949d5b7cbb5e28e, type: 3}
     instructionText: 
-    delayBeforePlaying: 10
+    delayBeforePlaying: 5
     waitForCompletion: 1
   playOnStart: 1
   startDelay: 1
