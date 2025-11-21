@@ -1,0 +1,11 @@
+Model Information:
+* title:	persian rug
+* source:	https://sketchfab.com/3d-models/persian-rug-fb937ed811884232b2019d90ac54e4e8
+* author:	fox_en (https://sketchfab.com/fox_en)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "persian rug" (https://sketchfab.com/3d-models/persian-rug-fb937ed811884232b2019d90ac54e4e8) by fox_en (https://sketchfab.com/fox_en) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
