@@ -241,7 +241,7 @@ MonoBehaviour:
   masterVolume: 1
   masterPitch: 1
   backgroundMusic: {fileID: 8300000, guid: b123c9862aae54aa0b61b904e5155589, type: 3}
-  backgroundMusicVolume: 0.5
+  backgroundMusicVolume: 0.1
   playBackgroundMusicOnStart: 1
   loopBackgroundMusic: 1
 --- !u!4 &205062727
