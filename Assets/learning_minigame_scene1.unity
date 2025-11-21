@@ -2991,7 +2991,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u0633\u0643\u0651\u064A\u0646"
+  m_text: "\uFEB3\uFEDC\u0651\uFEF4\uFEE6"
   m_isRightToLeft: 1
   m_fontAsset: {fileID: 11400000, guid: 1f0620798dc42b0418a7a51f07f0ff3a, type: 2}
   m_sharedMaterial: {fileID: -2861251877734803077, guid: 1f0620798dc42b0418a7a51f07f0ff3a, type: 2}
